@@ -5,7 +5,6 @@ export default class PlantList extends Component {
   // add state with a property called "plants" - initialize as an empty array
   state = {
     plants: [],
-    unfilteredPlants: [],
     name: '',
     price: 0,
     plantsAreFilted: false,
@@ -15,14 +14,24 @@ export default class PlantList extends Component {
   //   - fetch data from the server endpoint - http://localhost:3333/plants
   //   - set the returned plants array to this.state.plants
   componentDidMount() {
+    // axios.get('http://localhost:3333/plants').then(res => {
+    //   this.setState({
+    //     plants: res.data.plantsData,
+    //     unfilteredPlants: res.data.plantsData,
+    //   });
+    //   console.log(this.state.plants);
+    // });
+    this.fetchData();
+  }
+
+  fetchData = () => {
     axios.get('http://localhost:3333/plants').then(res => {
       this.setState({
         plants: res.data.plantsData,
-        unfilteredPlants: res.data.plantsData,
       });
       console.log(this.state.plants);
     });
-  }
+  };
 
   handelChange = e => {
     this.setState({ [e.target.name]: e.target.value });
@@ -61,8 +70,8 @@ export default class PlantList extends Component {
 
   handleClear = e => {
     e.preventDefault();
+    this.fetchData();
     this.setState({
-      plants: this.state.unfilteredPlants,
       name: '',
       price: 0,
       plantsAreFilted: false,
