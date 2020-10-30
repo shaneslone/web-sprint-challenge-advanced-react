@@ -8,6 +8,7 @@ export default class PlantList extends Component {
     unfilteredPlants: [],
     name: '',
     price: 0,
+    plantsAreFilted: false,
   };
 
   // when the component mounts:
@@ -29,31 +30,53 @@ export default class PlantList extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    if (this.state.name) {
+    if (this.state.name && this.state.price) {
+      // search for both price and name
+      this.setState({
+        plants: this.state.plants.filter(
+          plant =>
+            plant.name.toLowerCase().includes(this.state.name.toLowerCase()) &&
+            plant.price <= this.state.price
+        ),
+        plantsAreFilted: true,
+      });
+    } else if (this.state.name) {
+      // checks for just name
       this.setState({
         plants: this.state.plants.filter(plant =>
           plant.name.toLowerCase().includes(this.state.name.toLowerCase())
         ),
+        plantsAreFilted: true,
       });
-    }
-    if (this.state.price) {
+    } else if (this.state.price) {
+      // checks for just price
       this.setState({
         plants: this.state.plants.filter(
           plant => plant.price <= this.state.price
         ),
+        plantsAreFilted: true,
       });
     }
   };
 
   handleClear = e => {
     e.preventDefault();
-    this.setState({ plants: this.state.unfilteredPlants, name: '', price: 0 });
+    this.setState({
+      plants: this.state.unfilteredPlants,
+      name: '',
+      price: 0,
+      plantsAreFilted: false,
+    });
   };
   /*********  DON'T CHANGE ANYTHING IN THE RENDER FUNCTION *********/
   render() {
     return (
       <>
-        <form>
+        <form
+          onSubmit={
+            this.state.plantsAreFilted ? this.handleClear : this.handleSubmit
+          }
+        >
           <h2>Filter Plants</h2>
           <label>
             Name:
@@ -73,8 +96,9 @@ export default class PlantList extends Component {
               onChange={this.handelChange}
             />
           </label>
-          <button onClick={this.handleSubmit}>Search</button>
-          <button onClick={this.handleClear}>Clear Search</button>
+          <button>
+            {this.state.plantsAreFilted ? 'Clear Search' : 'Search'}
+          </button>
         </form>
         <main className='plant-list'>
           {this.state?.plants?.map(plant => (
