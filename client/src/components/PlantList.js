@@ -5,8 +5,9 @@ export default class PlantList extends Component {
   // add state with a property called "plants" - initialize as an empty array
   state = {
     plants: [],
-    search: '',
     unfilteredPlants: [],
+    name: '',
+    price: 0,
   };
 
   // when the component mounts:
@@ -23,33 +24,52 @@ export default class PlantList extends Component {
   }
 
   handelChange = e => {
-    this.setState({ search: e.target.value });
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    this.setState({
-      plants: this.state.plants.filter(plant =>
-        plant.name.toLowerCase().includes(this.state.search.toLowerCase())
-      ),
-    });
+    if (this.state.name) {
+      this.setState({
+        plants: this.state.plants.filter(plant =>
+          plant.name.toLowerCase().includes(this.state.name.toLowerCase())
+        ),
+      });
+    }
+    if (this.state.price) {
+      this.setState({
+        plants: this.state.plants.filter(
+          plant => plant.price <= this.state.price
+        ),
+      });
+    }
   };
 
   handleClear = e => {
     e.preventDefault();
-    this.setState({ plants: this.state.unfilteredPlants, search: '' });
+    this.setState({ plants: this.state.unfilteredPlants, name: '', price: 0 });
   };
   /*********  DON'T CHANGE ANYTHING IN THE RENDER FUNCTION *********/
   render() {
     return (
       <>
         <form>
+          <h2>Filter Plants</h2>
           <label>
-            Filter By Name:
+            Name:
             <input
-              name='filter'
+              name='name'
               type='text'
-              value={this.state.search}
+              value={this.state.name}
+              onChange={this.handelChange}
+            />
+          </label>
+          <label>
+            Price
+            <input
+              name='price'
+              type='number'
+              value={this.state.price}
               onChange={this.handelChange}
             />
           </label>
